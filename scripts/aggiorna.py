@@ -141,7 +141,9 @@ def nomi_esito(cfg, m):
     if "::" in (m.get("subtitle") or ""):
         partito = m["subtitle"].split("::", 1)[1].strip()
     esito = f"{nome} ({partito})" if partito else nome
-    breve = nome if cfg["id"] == "llm" else nome.split()[-1]
+    parti = nome.split()
+    # Cognome senza il nome di battesimo: "Marine Le Pen" -> "Le Pen"
+    breve = nome if cfg["id"] == "llm" or len(parti) < 2 else " ".join(parti[1:])
     return esito, breve
 
 
