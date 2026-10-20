@@ -1,0 +1,53 @@
+name: Aggiorna e pubblica
+
+on:
+  schedule:
+    # Ogni giorno alle 05:15 UTC (07:15 a Zurigo con l'ora legale, 06:15 in inverno)
+    - cron: "15 5 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pubblicazione
+  cancel-in-progress: false
+
+jobs:
+  aggiorna-e-pubblica:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pubblica.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scarica i dati da Kalshi
+        if: github.event_name != 'push'
+        run: python scripts/aggiorna.py
+
+      - name: Salva i nuovi dati nel repository
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || git commit -m "Aggiorna dati Kalshi $(date -u +%Y-%m-%d)"
+          git push
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: pubblica
+        uses: actions/deploy-pages@v4

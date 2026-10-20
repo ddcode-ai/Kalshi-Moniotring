@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalshi Osservatorio</title>
+<meta name="description" content="Cinque mercati di previsione di Kalshi, aggiornati ogni giorno: accordo USA-Iran, premier di Israele, Congresso USA, presidenziali francesi, miglior modello di IA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400&display=swap">
+<style>
+:root{
+  --bg:#f7f7f4; --panel:#ffffff; --fg:#1d1f1c; --muted:#62665f; --line:#e3e4de; --grid:#ecede8; --rule:#9a9d95;
+  --s1:#2f6db5; --s2:#c4572d; --s3:#3c8a5a; --s4:#8a5aa8;
+  --up:#2e7d4f; --down:#b3402a; --bad:#b3402a;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141613; --panel:#1c1f1b; --fg:#ecede8; --muted:#a3a79e; --line:#2d312b; --grid:#262a25; --rule:#6c7068;
+  --s1:#6ea6ea; --s2:#ec8a5f; --s3:#6cc08a; --s4:#bb8fd8;
+  --up:#6cc08a; --down:#ec8a5f; --bad:#ec8a5f; color-scheme:dark;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;margin:0;text-wrap:balance}
+.sub{color:var(--muted);font-size:.85rem;margin:6px 0 0}
+.lead{margin:10px 0 0;max-width:68ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10.5rem),1fr));gap:12px}
+.tile,.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.tile{display:flex;flex-direction:column;gap:4px;color:inherit;text-decoration:none}
+.tile:hover,.tile:focus-visible{border-color:var(--rule);outline:none}
+.lab{font-size:.8rem;color:var(--muted)}
+.num{font-family:var(--serif);font-size:2.25rem;line-height:1.15;font-variant-numeric:tabular-nums;min-height:2.6rem}
+.delta{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.up{color:var(--up)} .down{color:var(--down)}
+.card{display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.head h2{font-size:1.15rem;font-weight:500;margin:0}
+.head a{font-size:.8rem;color:var(--muted)}
+.cap{font-size:.85rem;color:var(--muted);margin:-6px 0 0;max-width:80ch}
+.body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:24px;align-items:start}
+@media (max-width:52rem){.body{grid-template-columns:minmax(0,1fr)}}
+.label{font-size:.8rem;color:var(--muted);margin:0 0 6px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:400;color:var(--muted);font-size:.8rem;padding:0 0 6px}
+th.p,th.v{text-align:right}
+td{padding:6px 0;vertical-align:top;border-top:1px solid var(--line)}
+td.p{text-align:right;width:3.9rem;padding-left:8px}
+td.v{text-align:right;color:var(--muted);font-size:.8rem;padding-left:8px;white-space:nowrap;width:5.8rem}
+.track{height:5px;border-radius:3px;background:var(--grid);margin-top:5px;overflow:hidden}
+.fill{height:100%;border-radius:3px;background:var(--s1)}
+.chart{position:relative;min-height:260px}
+.chart svg{display:block}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.12);padding:6px 10px;font-size:.8rem;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:2}
+.tip .d{color:var(--muted)}
+.tip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.err{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.85rem;min-height:6rem}
+.err::before{content:"";width:.4rem;height:.4rem;border-radius:50%;background:var(--bad)}
+.foot{font-size:.8rem;color:var(--muted);max-width:80ch;margin:0}
+.foot a{color:inherit}
+@media (max-width:30rem){.v{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Kalshi Osservatorio</h1>
+    <p class="sub" id="aggiornato">Caricamento dei dati…</p>
+    <p class="lead">Cinque mercati di previsione di Kalshi sotto osservazione. Ogni percentuale è il prezzo di un contratto che paga 1 dollaro se l'evento si verifica, cioè la probabilità che il mercato gli attribuisce.</p>
+  </header>
+
+  <div class="tiles" id="sintesi"></div>
+  <div id="sezioni" style="display:flex;flex-direction:column;gap:20px"></div>
+
+  <p class="foot">Dati dall'interfaccia pubblica di <a href="https://kalshi.com">Kalshi</a>, aggiornati automaticamente ogni mattina. La quota è il punto medio tra il miglior prezzo di acquisto e di vendita; il volume è il totale scambiato su quell'esito dall'apertura del mercato. Lo storico usa il valore di fine giornata e ripete il precedente nei giorni senza dati. Pagina informativa, non è un consiglio di investimento.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(function () {
+  const MERCATI = [
+    { id: 'iran', titolo: 'Accordo nucleare USA-Iran', titoloTile: 'Accordo nucleare USA-Iran entro gen 2029', chiave: 'KXUSAIRANAGREEMENT-27-29JAN20',
+      url: 'https://kalshi.com/markets/kxusairanagreement/us-iran-nuclear-deal/kxusairanagreement-27',
+      nota: "Probabilità che Stati Uniti e Iran firmino un accordo sul nucleare entro ciascuna scadenza. Le scadenze già passate sono chiuse senza accordo.",
+      colonna: 'Scadenza', oggi: 'Oggi, per scadenza', storico: 'Andamento dal 14 aprile, tre scadenze' },
+    { id: 'israele', titolo: 'Primo ministro di Israele', titoloTile: 'Netanyahu premier dopo il voto', chiave: 'KXISRAELPM-26OCT27-BNET',
+      url: 'https://kalshi.com/markets/kxisraelpm/who-will-be-the-prime-minister-of-israel-after-their-election/kxisraelpm-26oct27',
+      nota: "Chi guiderà il governo dopo le elezioni del 27 ottobre 2026. Il mercato elenca 18 candidati: qui quelli sopra il 2%.",
+      colonna: 'Candidato', oggi: 'Oggi', storico: "Andamento dall'11 aprile" },
+    { id: 'potere', titolo: 'Equilibrio di potere al Congresso USA', titoloTile: 'Democratici a Camera e Senato', chiave: 'KXBALANCEPOWERCOMBO-27FEB-DD',
+      url: 'https://kalshi.com/markets/kxbalancepowercombo/congress-balance-of-power-combo/kxbalancepowercombo-27feb',
+      nota: "Quale partito controllerà Camera e Senato dopo le elezioni di metà mandato del 3 novembre 2026: le quattro combinazioni possibili.",
+      colonna: 'Esito', oggi: 'Oggi', storico: "Andamento dall'apertura, l'11 dicembre 2025" },
+    { id: 'francia', titolo: 'Presidenziali francesi 2027', titoloTile: 'Le Pen presidente nel 2027', chiave: 'KXFRENCHPRES-27-MLEP',
+      url: 'https://kalshi.com/markets/kxfrenchpres/french-presidential-election/kxfrenchpres-27',
+      nota: "Chi vincerà l'elezione presidenziale francese. Il mercato elenca 30 nomi: qui quelli sopra l'1%. Fino a giugno 2026 gli scambi erano scarsi.",
+      colonna: 'Candidato', oggi: 'Oggi', storico: 'Andamento dal 1° gennaio 2026, quattro candidati' },
+    { id: 'llm', titolo: 'Miglior modello di IA a fine 2029', titoloTile: 'Google con il miglior modello a fine 2029', chiave: 'KXBESTLLM-29DEC31-GOOG',
+      url: 'https://kalshi.com/markets/kxbestllm/best-llm/kxbestllm-29dec31',
+      nota: "Quale azienda avrà il modello in testa alla classifica di riferimento il 31 dicembre 2029. Mercato aperto il 9 ottobre 2026 e quasi senza scambi: le quote sono il punto medio tra offerte molto distanti e possono cambiare molto con un solo ordine.",
+      colonna: 'Azienda', oggi: 'Oggi', storico: 'Andamento dal 9 ottobre 2026' }
+  ];
+  const MESI = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  const fp = v => d3.format('.1~f')(v).replace('.', ',') + '%';
+  const fv = v => '$' + d3.format(',.0f')(v).replace(/,/g, '.');
+  const fd = d => d.getUTCDate() + ' ' + MESI[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const colori = () => ['--s1', '--s2', '--s3', '--s4'].map(css);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  let Q = null, S = null;
+
+  function costruisci() {
+    const tiles = document.getElementById('sintesi');
+    const sez = document.getElementById('sezioni');
+    MERCATI.forEach(m => {
+      const a = el('a', 'tile'); a.href = '#' + m.id;
+      a.append(el('span', 'lab', m.titoloTile), el('span', 'num'), el('span', 'delta'));
+      a.dataset.mercato = m.id; tiles.appendChild(a);
+
+      const s = el('section', 'card'); s.id = m.id;
+      const h = el('div', 'head'); h.append(el('h2', null, m.titolo));
+      const link = el('a', null, 'Apri su Kalshi'); link.href = m.url; link.target = '_blank'; link.rel = 'noopener'; h.appendChild(link);
+      const body = el('div', 'body');
+      const sx = el('div'); sx.append(el('p', 'label', m.oggi));
+      const t = el('table'); t.innerHTML = '<thead><tr><th></th><th class="p">Prob.</th><th class="v">Volume</th></tr></thead><tbody></tbody>';
+      t.querySelector('th').textContent = m.colonna; sx.appendChild(t);
+      const dx = el('div'); dx.append(el('p', 'label', m.storico)); const c = el('div', 'chart'); c.dataset.mercato = m.id; dx.appendChild(c);
+      body.append(sx, dx);
+      s.append(h, el('p', 'cap', m.nota), body);
+      sez.appendChild(s);
+    });
+  }
+
+  function variazione7(serie) {
+    if (!serie || !serie.punti.length) return null;
+    const p = serie.punti, last = p[p.length - 1];
+    const t = new Date(last[0] + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() - 7);
+    const ref = t.toISOString().slice(0, 10);
+    const prev = p.filter(x => x[0] <= ref).pop() || p[0];
+    return Math.round((last[1] - prev[1]) * 10) / 10;
+  }
+
+  function riempi() {
+    const agg = new Date(Q.aggiornato);
+    document.getElementById('aggiornato').textContent = 'Aggiornato il ' + agg.toLocaleString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Zurich' });
+    MERCATI.forEach(m => {
+      const dati = (Q.mercati.find(x => x.id === m.id) || { esiti: [] }).esiti;
+      const chiave = dati.find(e => e.ticker === m.chiave);
+      const tile = document.querySelector(`.tile[data-mercato="${m.id}"]`);
+      tile.querySelector('.num').textContent = chiave ? fp(chiave.prob) : '—';
+      const dEl = tile.querySelector('.delta'); dEl.textContent = '';
+      const v = variazione7(S.serie.find(x => x.ticker === m.chiave));
+      if (v != null) {
+        const s = el('span', v > 0 ? 'up' : v < 0 ? 'down' : null, (v > 0 ? '+' : v < 0 ? '−' : '±') + d3.format('.1f')(Math.abs(v)).replace('.', ',') + ' pt');
+        dEl.append(s, document.createTextNode(' in 7 giorni'));
+      }
+      const tb = document.querySelector(`#${m.id} tbody`); tb.textContent = '';
+      dati.forEach(e => {
+        const tr = el('tr'); const te = el('td');
+        const tr2 = el('div', 'track'); const f = el('div', 'fill'); f.style.width = Math.max(e.prob, 0.6) + '%'; tr2.appendChild(f);
+        te.append(el('div', null, e.esito), tr2);
+        tr.append(te, el('td', 'p', fp(e.prob)), el('td', 'v', fv(e.volume)));
+        tb.appendChild(tr);
+      });
+    });
+    disegnaTutti();
+  }
+
+  function disegnaTutti() {
+    document.querySelectorAll('.chart').forEach(box => disegna(box, S.serie.filter(s => s.mercato === box.dataset.mercato)));
+  }
+
+  function disegna(box, serieDati) {
+    box.textContent = '';
+    if (!serieDati.length) return;
+    const pal = colori();
+    const series = serieDati.map((s, i) => ({ n: s.etichetta, c: pal[i % pal.length], pts: s.punti.map(p => ({ d: new Date(p[0] + 'T00:00:00Z'), v: p[1] })) }));
+    const dates = [...new Set(serieDati.flatMap(s => s.punti.map(p => p[0])))].sort().map(d => new Date(d + 'T00:00:00Z'));
+    const W = Math.max(box.clientWidth || 600, 260), H = 260;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Andamento delle probabilità nel tempo');
+    const last = series.map(s => s.pts[s.pts.length - 1]);
+    let lw = 0;
+    series.forEach((s, i) => { const t = svg.append('text').attr('font-size', 12).attr('font-weight', 500).text(`${s.n} ${fp(last[i].v)}`); lw = Math.max(lw, t.node().getComputedTextLength()); t.remove(); });
+    const vmax = d3.max(series, s => d3.max(s.pts, p => p.v));
+    const top = Math.min(100, Math.ceil((vmax * 1.08) / 10) * 10 || 10);
+    const m = { t: 10, r: Math.min(lw + 14, W * 0.42), b: 24, l: 36 };
+    const x = d3.scaleUtc(d3.extent(dates), [m.l, W - m.r]);
+    const y = d3.scaleLinear([0, top], [H - m.b, m.t]);
+    const fg = css('--muted'), grid = css('--grid'), rule = css('--rule');
+    const yt = y.ticks(4);
+    svg.append('g').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', d => y(d)).attr('y2', d => y(d)).attr('stroke', grid);
+    svg.append('g').selectAll('text').data(yt).join('text').attr('x', m.l - 8).attr('y', d => y(d)).attr('dy', '0.32em').attr('text-anchor', 'end').attr('fill', fg).attr('font-size', 12).text(d => d + '%');
+    const span = (dates[dates.length - 1] - dates[0]) / 864e5;
+    let xt, xf;
+    if (span < 45) { xt = x.ticks(d3.utcDay.every(W < 420 ? 4 : 2)); xf = d => d.getUTCDate() + ' ' + MESI[d.getUTCMonth()]; }
+    else { const step = span > 240 ? (W < 520 ? 3 : 2) : (W < 520 ? 2 : 1); xt = x.ticks(d3.utcMonth.every(step)); xf = d => d.getUTCMonth() === 0 ? 'gen ' + String(d.getUTCFullYear()).slice(2) : MESI[d.getUTCMonth()]; }
+    xt = xt.filter(d => x(d) >= m.l + 12 && x(d) <= W - m.r - 12);
+    svg.append('g').selectAll('text').data(xt).join('text').attr('x', d => x(d)).attr('y', H - 6).attr('text-anchor', 'middle').attr('fill', fg).attr('font-size', 12).text(xf);
+    series.forEach(s => svg.append('path').datum(s.pts).attr('fill', 'none').attr('stroke', s.c).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('d', d3.line().x(d => x(d.d)).y(d => y(d.v))));
+    const ends = series.map((s, i) => ({ s, v: last[i].v, x: x(last[i].d), y: y(last[i].v) })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
+    const over = ends.length ? ends[ends.length - 1].y - (H - m.b) : 0;
+    if (over > 0) ends.forEach(e => { e.y -= over; });
+    ends.forEach(e => {
+      svg.append('circle').attr('cx', e.x).attr('cy', y(e.v)).attr('r', 3).attr('fill', e.s.c);
+      svg.append('text').attr('x', e.x + 8).attr('y', e.y).attr('dy', '0.32em').attr('font-size', 12).attr('font-weight', 500).attr('fill', e.s.c).text(`${e.s.n} ${fp(e.v)}`);
+    });
+    const ruleL = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).attr('stroke', rule).style('display', 'none');
+    const dots = series.map(s => svg.append('circle').attr('r', 4).attr('fill', s.c).style('display', 'none'));
+    const tip = d3.select(box).append('div').attr('class', 'tip').style('display', 'none');
+    const bis = d3.bisector(d => d).center;
+    const at = (s, d) => { const p = s.pts.find(p => +p.d === +d); return p ? p.v : null; };
+    svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('pointermove', ev => {
+        const [px] = d3.pointer(ev); const d = dates[bis(dates, x.invert(px))]; const cx = x(d);
+        ruleL.attr('x1', cx).attr('x2', cx).style('display', null);
+        tip.text(''); tip.append('div').attr('class', 'd').text(fd(d));
+        series.map((s, i) => ({ s, i, v: at(s, d) })).sort((a, b) => (b.v ?? -1) - (a.v ?? -1)).forEach(o => {
+          if (o.v == null) { dots[o.i].style('display', 'none'); return; }
+          dots[o.i].attr('cx', cx).attr('cy', y(o.v)).style('display', null);
+          const r = tip.append('div'); r.append('i').style('background', o.s.c); r.append('span').text(`${o.s.n} ${fp(o.v)}`);
+        });
+        tip.style('display', null);
+        const sc = box.clientWidth / W, tw = tip.node().offsetWidth;
+        let left = cx * sc + 12; if (left + tw > box.clientWidth) left = cx * sc - tw - 12;
+        tip.style('left', Math.max(0, left) + 'px').style('top', (m.t * sc + 4) + 'px');
+      })
+      .on('pointerleave', () => { ruleL.style('display', 'none'); dots.forEach(c => c.style('display', 'none')); tip.style('display', 'none'); });
+  }
+
+  costruisci();
+  Promise.all(['data/quote.json', 'data/storico.json'].map(u => fetch(u, { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(u); return r.json(); })))
+    .then(([q, s]) => {
+      Q = q; S = s; riempi();
+      const h = location.hash.slice(1); if (h && document.getElementById(h)) document.getElementById(h).scrollIntoView();
+    })
+    .catch(() => {
+      document.getElementById('aggiornato').textContent = 'Non è stato possibile caricare i dati. Riprova tra qualche minuto.';
+      document.querySelectorAll('.chart').forEach(b => { b.textContent = ''; b.appendChild(el('div', 'err', 'Dati non disponibili')); });
+    });
+  let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { if (S) disegnaTutti(); }, 150); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (S) disegnaTutti(); });
+})();
+</script>
+</body>
+</html>
