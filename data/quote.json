@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-20T15:28+00:00",
+ "aggiornato": "2026-10-20T15:30+00:00",
  "mercati": [
   {
    "id": "iran",
@@ -30,10 +30,10 @@
      "ticker": "KXUSAIRANAGREEMENT-27",
      "esito": "Entro il 1° gennaio 2027",
      "etichetta": "Gen 2027",
-     "prob": 8.65,
-     "acquisto": 8.3,
-     "vendita": 9.0,
-     "volume": 1839175,
+     "prob": 9.55,
+     "acquisto": 9.1,
+     "vendita": 10.0,
+     "volume": 1839185,
      "chiusura": "2027-01-01T15:00:00Z",
      "stato": "active"
     },
@@ -142,7 +142,7 @@
      "prob": 63.5,
      "acquisto": 63.0,
      "vendita": 64.0,
-     "volume": 5996339,
+     "volume": 5996346,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -187,7 +187,7 @@
     {
      "ticker": "KXFRENCHPRES-27-MLEP",
      "esito": "Marine Le Pen (National Rally)",
-     "etichetta": "Pen",
+     "etichetta": "Le Pen",
      "prob": 52.5,
      "acquisto": 52.0,
      "vendita": 53.0,
