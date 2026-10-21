@@ -12,6 +12,7 @@ import json
 import pathlib
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -53,22 +54,57 @@ TITOLI = [
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 
 
+import http.cookiejar
+
+_jar = http.cookiejar.CookieJar()
+_opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(_jar))
+_crumb = None
+
+
 def scarica(url, tentativi=3):
     for n in range(tentativi):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*"})
-            with urllib.request.urlopen(req, timeout=30) as r:
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*", "Accept-Language": "en-US,en;q=0.9"})
+            with _opener.open(req, timeout=20) as r:
                 return r.read()
-        except Exception as e:
+        except urllib.error.HTTPError as e:
+            if n == tentativi - 1 or e.code not in (429, 500, 502, 503):
+                raise
+            time.sleep(5 * (n + 1))
+        except Exception:
             if n == tentativi - 1:
                 raise
             time.sleep(2 * (n + 1))
+
+
+def crumb_yahoo():
+    """Come fa il browser: prima un cookie di sessione, poi il 'crumb' da allegare alle richieste."""
+    global _crumb
+    if _crumb is not None:
+        return _crumb
+    for url in ("https://fc.yahoo.com", "https://finance.yahoo.com/"):
+        try:
+            scarica(url, tentativi=1)
+        except Exception:
+            pass  # risponde spesso con un errore, ma imposta comunque il cookie
+    for host in ("query1", "query2"):
+        try:
+            c = scarica(f"https://{host}.finance.yahoo.com/v1/test/getcrumb", tentativi=2).decode().strip()
+            if c and "<" not in c and len(c) < 50:
+                _crumb = c
+                return c
+        except Exception as e:
+            print("crumb non ottenuto:", host, e, file=sys.stderr)
+    _crumb = ""
+    return ""
 
 
 def da_yahoo(simbolo):
     for host in ("query1", "query2"):
         url = (f"https://{host}.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(simbolo)}"
                "?range=1y&interval=1d&includePrePost=false&events=")
+        if crumb_yahoo():
+            url += "&crumb=" + urllib.parse.quote(crumb_yahoo())
         try:
             dati = json.loads(scarica(url))
         except Exception as e:
@@ -104,6 +140,8 @@ def da_yahoo(simbolo):
 def da_stooq(simbolo):
     url = f"https://stooq.com/q/d/l/?s={urllib.parse.quote(simbolo)}&i=d"
     testo = scarica(url).decode("utf-8", "replace")
+    if not testo.startswith("Date"):
+        raise RuntimeError(f"Stooq {simbolo}: risposta inattesa: {testo[:80]!r}")
     righe = list(csv.DictReader(io.StringIO(testo)))
     limite = (dt.date.today() - dt.timedelta(days=366)).isoformat()
     punti = [(r["Date"], float(r["Close"])) for r in righe if r.get("Date", "") >= limite and r.get("Close")]
@@ -162,6 +200,7 @@ def main():
     for f in falliti:
         print("NO ", f, file=sys.stderr)
         print(f"::warning title=Portafoglio::{f[:900]}")
+    print(f"::notice title=Portafoglio crumb::{'si' if _crumb else 'no'}")
     print(f"::notice title=Portafoglio::Scaricati {len(ok)} su {len(TITOLI)}: " + "; ".join(ok)[:3000])
     if len(falliti) == len(TITOLI):
         print("Nessun titolo scaricato: dati non modificati.", file=sys.stderr)
