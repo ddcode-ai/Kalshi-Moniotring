@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-21T08:55+00:00",
+ "aggiornato": "2026-10-21T09:04+00:00",
  "mercati": [
   {
    "id": "iran",
@@ -104,7 +104,7 @@
      "prob": 26.5,
      "acquisto": 26.0,
      "vendita": 27.0,
-     "volume": 587353,
+     "volume": 587355,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     },
@@ -142,7 +142,7 @@
      "prob": 64.5,
      "acquisto": 64.0,
      "vendita": 65.0,
-     "volume": 6216923,
+     "volume": 6216938,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -164,7 +164,7 @@
      "prob": 9.15,
      "acquisto": 9.1,
      "vendita": 9.2,
-     "volume": 20607997,
+     "volume": 20608069,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -191,7 +191,7 @@
      "prob": 53.5,
      "acquisto": 53.0,
      "vendita": 54.0,
-     "volume": 232455,
+     "volume": 232488,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
