@@ -32,7 +32,13 @@ jobs:
 
       - name: Scarica i dati da Kalshi
         if: github.event_name != 'push'
+        continue-on-error: true
         run: python scripts/aggiorna.py
+
+      - name: Scarica i prezzi del portafoglio
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: python scripts/portafoglio.py
 
       - name: Salva i nuovi dati nel repository
         if: github.event_name != 'push'
