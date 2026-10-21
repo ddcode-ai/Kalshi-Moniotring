@@ -174,10 +174,11 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
       const top = el('div', 'top'); const who = el('div', 'who'); const n = el('div', 'name', t.nome); n.title = t.nome;
       who.append(n);
       if (PESI) who.append(t.peso != null ? el('span', 'peso', it(t.peso, 1) + '%') : el('span', 'peso no', 'not in portfolio'));
-      top.append(who, el('div', 'sym', t.simbolo));
+      top.append(who);
       const vals = el('div', 'vals');
       const l = el('div', 'last', fVal(t, t.last));
       if (!t.tasso && t.valuta) l.append(el('small', null, VALUTE[t.valuta] || t.valuta));
+      l.append(el('small', null, '· ' + t.simbolo));
       vals.append(l, el('div', 'chg ' + cls(t), fVar(t)));
       const sp = el('div', 'spark');
       const r = el('div', 'range');
