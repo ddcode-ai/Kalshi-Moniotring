@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-21T09:33+00:00",
+ "aggiornato": "2026-10-21T11:59+00:00",
  "mercati": [
   {
    "id": "iran",
@@ -11,7 +11,7 @@
      "prob": 2.5,
      "acquisto": 2.0,
      "vendita": 3.0,
-     "volume": 1283975,
+     "volume": 1284285,
      "chiusura": "2026-11-01T15:00:00Z",
      "stato": "active"
     },
@@ -30,8 +30,8 @@
      "ticker": "KXUSAIRANAGREEMENT-27",
      "esito": "Entro il 1° gennaio 2027",
      "etichetta": "Gen 2027",
-     "prob": 9.35,
-     "acquisto": 7.7,
+     "prob": 9.45,
+     "acquisto": 7.9,
      "vendita": 11.0,
      "volume": 1849117,
      "chiusura": "2027-01-01T15:00:00Z",
@@ -66,7 +66,7 @@
      "prob": 32.5,
      "acquisto": 32.0,
      "vendita": 33.0,
-     "volume": 124930,
+     "volume": 124933,
      "chiusura": "2028-01-01T15:00:00Z",
      "stato": "active"
     },
@@ -93,7 +93,7 @@
      "prob": 46.5,
      "acquisto": 46.0,
      "vendita": 47.0,
-     "volume": 117787,
+     "volume": 117925,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     },
@@ -104,7 +104,7 @@
      "prob": 26.5,
      "acquisto": 26.0,
      "vendita": 27.0,
-     "volume": 587355,
+     "volume": 587814,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     },
@@ -142,7 +142,7 @@
      "prob": 64.5,
      "acquisto": 64.0,
      "vendita": 65.0,
-     "volume": 6221558,
+     "volume": 6226323,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -153,7 +153,7 @@
      "prob": 26.5,
      "acquisto": 26.0,
      "vendita": 27.0,
-     "volume": 4887785,
+     "volume": 4898928,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -164,7 +164,7 @@
      "prob": 9.2,
      "acquisto": 9.1,
      "vendita": 9.3,
-     "volume": 20613724,
+     "volume": 20619019,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -175,7 +175,7 @@
      "prob": 0.55,
      "acquisto": 0.5,
      "vendita": 0.6,
-     "volume": 14034837,
+     "volume": 14102555,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     }
@@ -191,7 +191,7 @@
      "prob": 53.5,
      "acquisto": 53.0,
      "vendita": 54.0,
-     "volume": 232488,
+     "volume": 237443,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -224,7 +224,7 @@
      "prob": 8.45,
      "acquisto": 8.4,
      "vendita": 8.5,
-     "volume": 52002,
+     "volume": 52064,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
