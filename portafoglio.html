@@ -11,14 +11,14 @@
 <style>
 :root{
   --bg:#f7f7f4; --panel:#ffffff; --fg:#1d1f1c; --muted:#62665f; --line:#e3e4de; --grid:#ecede8; --rule:#9a9d95;
-  --up:#2e7d4f; --down:#b3402a; --flat:#62665f; --accent:#2f6db5;
+  --up:#2e7d4f; --down:#b3402a; --flat:#62665f; --accent:#2f6db5; --ma50:#2f6db5; --ma200:#a0671c;
   --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#141613; --panel:#1c1f1b; --fg:#ecede8; --muted:#a3a79e; --line:#2d312b; --grid:#262a25; --rule:#6c7068;
-  --up:#6cc08a; --down:#ec8a5f; --flat:#a3a79e; --accent:#6ea6ea; color-scheme:dark;
+  --up:#6cc08a; --down:#ec8a5f; --flat:#a3a79e; --accent:#6ea6ea; --ma50:#6ea6ea; --ma200:#e0b25c; color-scheme:dark;
 }}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
@@ -38,6 +38,10 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
 .toolbar button{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
 .toolbar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:500}
 .toolbar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.toolbars{display:flex;flex-wrap:wrap;gap:10px 28px}
+.sw{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.sw.ma200{border-top-style:dashed}
+.badge{font-size:.72rem;padding:0 6px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,16.5rem),1fr));gap:12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 10px;min-width:0;display:flex;flex-direction:column;gap:2px}
 .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
@@ -67,16 +71,23 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   <header>
     <h1>Portafoglio a un anno</h1>
     <p class="sub" id="aggiornato">Caricamento dei dati…</p>
-    <p class="lead">Andamento degli ultimi 12 mesi di ogni titolo della lista, con prezzo di chiusura giornaliero. Ogni grafico ha la sua scala, per mostrare la forma del movimento: per confrontare i titoli tra loro usa la variazione percentuale.</p>
+    <p class="lead">Andamento degli ultimi 12 mesi di ogni titolo della lista, con prezzo di chiusura giornaliero. Le linee sottili sono le medie mobili a 50 e 200 giorni di Borsa, calcolate sui prezzi di chiusura. Ogni grafico ha la sua scala, per mostrare la forma del movimento: per confrontare i titoli tra loro usa la variazione percentuale.</p>
   </header>
 
   <div class="summary" id="sintesi"></div>
 
+  <div class="toolbars">
   <div class="toolbar" role="group" aria-label="Ordina i titoli">
     <span>Ordina per</span>
     <button type="button" id="ord-lista" data-ord="lista" aria-pressed="true">Ordine della lista</button>
     <button type="button" id="ord-var" data-ord="var" aria-pressed="false">Variazione a 1 anno</button>
     <button type="button" id="ord-nome" data-ord="nome" aria-pressed="false">Nome</button>
+  </div>
+  <div class="toolbar" role="group" aria-label="Medie mobili">
+    <span>Medie mobili</span>
+    <button type="button" id="ma-50" data-ma="50" aria-pressed="true"><span class="sw" style="color:var(--ma50)"></span>50 giorni</button>
+    <button type="button" id="ma-200" data-ma="200" aria-pressed="true"><span class="sw ma200" style="color:var(--ma200)"></span>200 giorni</button>
+  </div>
   </div>
 
   <div class="grid" id="griglia"></div>
@@ -94,15 +105,31 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const VALUTE = { USD: '$', EUR: '€', CHF: 'CHF', GBP: '£', GBp: 'p' };
-  let T = [], ordine = 'lista';
+  let T = [], ordine = 'lista', MA = { 50: true, 200: true };
   try { ordine = localStorage.getItem('ordine-portafoglio') || 'lista'; } catch (e) {}
+  try { const m = JSON.parse(localStorage.getItem('medie-portafoglio') || 'null'); if (m) MA = m; } catch (e) {}
 
+  // Media mobile semplice su n sedute: null finché non ci sono n prezzi
+  function media(valori, n) {
+    const out = new Array(valori.length).fill(null); let somma = 0;
+    valori.forEach((v, i) => { somma += v; if (i >= n) somma -= valori[i - n]; if (i >= n - 1) out[i] = somma / n; });
+    return out;
+  }
   function calcola(t) {
-    const p = t.punti, last = p[p.length - 1][1], first = p[0][1];
+    const tutti = t.punti, valori = tutti.map(x => x[1]);
+    const mm50 = media(valori, 50), mm200 = media(valori, 200);
+    // Si mostra l'ultimo anno; gli anni precedenti servono solo per le medie
+    const fine = new Date(tutti[tutti.length - 1][0] + 'T00:00:00Z'); fine.setUTCFullYear(fine.getUTCFullYear() - 1);
+    const inizioAnno = fine.toISOString().slice(0, 10);
+    let k = tutti.findIndex(x => x[0] >= inizioAnno); if (k < 0) k = 0;
+    const anno = tutti.slice(k).map((x, i) => ({ s: x[0], d: new Date(x[0] + 'T00:00:00Z'), v: x[1], m50: mm50[k + i], m200: mm200[k + i] }));
+    const last = anno[anno.length - 1].v, first = anno[0].v;
     const tasso = t.tipo === 'tasso';
     const variazione = tasso ? last - first : (last / first - 1) * 100;
-    const vals = p.map(x => x[1]);
-    return Object.assign(t, { last, first, variazione, tasso, min: Math.min(...vals), max: Math.max(...vals) });
+    const vals = anno.map(x => x.v);
+    const ultimo200 = anno[anno.length - 1].m200;
+    return Object.assign(t, { anno, last, first, variazione, tasso, min: Math.min(...vals), max: Math.max(...vals),
+      sopra200: ultimo200 == null ? null : last >= ultimo200 });
   }
   const fVar = t => (t.variazione > 0 ? '+' : t.variazione < 0 ? '−' : '±') + it(Math.abs(t.variazione), 1) + (t.tasso ? ' pt' : '%');
   const fVal = (t, v) => t.tasso ? it(v, 2) + '%' : it(v, dec(v));
@@ -135,7 +162,9 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
       vals.append(l, el('div', 'chg ' + cls(t), fVar(t)));
       const sp = el('div', 'spark');
       const r = el('div', 'range');
-      r.append(el('span', null, 'Min ' + fVal(t, t.min)), el('span', null, 'Max ' + fVal(t, t.max)));
+      const b = t.sopra200 == null ? el('span') : el('span', 'badge ' + (t.sopra200 ? 'up' : 'down'), (t.sopra200 ? 'Sopra' : 'Sotto') + ' MM200');
+      if (t.sopra200 != null) b.title = 'Ultimo prezzo ' + (t.sopra200 ? 'sopra' : 'sotto') + ' la media mobile a 200 giorni';
+      r.append(el('span', null, 'Min ' + fVal(t, t.min)), b, el('span', null, 'Max ' + fVal(t, t.max)));
       c.append(top, vals, sp, r);
       if (t.nota) c.append(el('div', 'note', t.nota));
       g.append(c);
@@ -145,10 +174,12 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
 
   function disegna(box, t) {
     const W = Math.max(box.clientWidth || 240, 160), H = 78;
-    const pts = t.punti.map(p => ({ d: new Date(p[0] + 'T00:00:00Z'), v: p[1], s: p[0] }));
+    const pts = t.anno;
     const x = d3.scaleUtc(d3.extent(pts, p => p.d), [2, W - 4]);
-    const pad = (t.max - t.min) * 0.08 || 1;
-    const y = d3.scaleLinear([t.min - pad, t.max + pad], [H - 2, 2]);
+    const tuttiY = pts.flatMap(p => [p.v, MA[50] ? p.m50 : null, MA[200] ? p.m200 : null]).filter(v => v != null);
+    const lo = Math.min(...tuttiY), hi = Math.max(...tuttiY);
+    const pad = (hi - lo) * 0.08 || 1;
+    const y = d3.scaleLinear([lo - pad, hi + pad], [H - 2, 2]);
     const col = css(t.variazione > 0.05 ? '--up' : t.variazione < -0.05 ? '--down' : '--flat');
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
       .attr('aria-label', `${t.nome}: ${fVar(t)} in un anno`);
@@ -158,6 +189,12 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
     svg.append('line').attr('x1', 2).attr('x2', W - 4).attr('y1', y(t.first)).attr('y2', y(t.first)).attr('stroke', css('--rule')).attr('stroke-dasharray', '3 3').attr('stroke-width', 1);
     svg.append('path').datum(pts).attr('fill', `url(#${id})`).attr('d', d3.area().x(p => x(p.d)).y0(H).y1(p => y(p.v)));
     svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 1.6).attr('stroke-linejoin', 'round').attr('d', d3.line().x(p => x(p.d)).y(p => y(p.v)));
+    [[50, '--ma50', null], [200, '--ma200', '4 2']].forEach(([n, c, dash]) => {
+      if (!MA[n]) return;
+      const linea = svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', css(c)).attr('stroke-width', 1.2).attr('stroke-opacity', .9)
+        .attr('d', d3.line().defined(p => p['m' + n] != null).x(p => x(p.d)).y(p => y(p['m' + n])));
+      if (dash) linea.attr('stroke-dasharray', dash);
+    });
     svg.append('circle').attr('cx', x(pts[pts.length - 1].d)).attr('cy', y(t.last)).attr('r', 2.6).attr('fill', col);
     const dot = svg.append('circle').attr('r', 3).attr('fill', col).style('display', 'none');
     const tip = d3.select(box).append('div').attr('class', 'tip').style('display', 'none');
@@ -166,7 +203,10 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
       .on('pointermove', ev => {
         const [px] = d3.pointer(ev); const p = pts[bis(pts, x.invert(px))];
         dot.attr('cx', x(p.d)).attr('cy', y(p.v)).style('display', null);
-        tip.text(fdata(p.s) + ' · ' + fVal(t, p.v)).style('display', null);
+        let testo = fdata(p.s) + ' · ' + fVal(t, p.v);
+        if (MA[50] && p.m50 != null) testo += ' · MM50 ' + fVal(t, p.m50);
+        if (MA[200] && p.m200 != null) testo += ' · MM200 ' + fVal(t, p.m200);
+        tip.text(testo).style('display', null);
         const sc = box.clientWidth / W, tw = tip.node().offsetWidth;
         let left = x(p.d) * sc - tw / 2; left = Math.max(0, Math.min(left, box.clientWidth - tw));
         tip.style('left', left + 'px');
@@ -175,9 +215,14 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   }
 
   function aggiornaBottoni() {
-    document.querySelectorAll('.toolbar button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ord === ordine)));
+    document.querySelectorAll('.toolbar button[data-ord]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ord === ordine)));
+    document.querySelectorAll('.toolbar button[data-ma]').forEach(b => b.setAttribute('aria-pressed', String(!!MA[b.dataset.ma])));
   }
-  document.querySelectorAll('.toolbar button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.toolbar button[data-ma]').forEach(b => b.addEventListener('click', () => {
+    MA[b.dataset.ma] = !MA[b.dataset.ma]; try { localStorage.setItem('medie-portafoglio', JSON.stringify(MA)); } catch (e) {}
+    aggiornaBottoni(); griglia();
+  }));
+  document.querySelectorAll('.toolbar button[data-ord]').forEach(b => b.addEventListener('click', () => {
     ordine = b.dataset.ord; try { localStorage.setItem('ordine-portafoglio', ordine); } catch (e) {}
     aggiornaBottoni(); griglia();
   }));
@@ -187,7 +232,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
     T = d.titoli.filter(t => t.punti && t.punti.length > 1).map(calcola);
     const agg = new Date(d.aggiornato);
     let testo = 'Aggiornato il ' + agg.toLocaleString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Zurich' });
-    if (T.length) testo += ' · dati dal ' + fdata(T[0].punti[0][0]);
+    if (T.length) testo += ' · grafici dal ' + fdata(T[0].anno[0].s);
     if (d.non_aggiornati && d.non_aggiornati.length) testo += ' · non aggiornati oggi: ' + d.non_aggiornati.join(', ');
     document.getElementById('aggiornato').textContent = testo;
     sintesi(); griglia();

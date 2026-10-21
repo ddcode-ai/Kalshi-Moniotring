@@ -103,7 +103,7 @@ def da_yahoo(simbolo):
     """Usa la libreria yfinance, che imita un browser e non viene bloccata come le richieste semplici."""
     import yfinance as yf
     t = yf.Ticker(simbolo)
-    storia = t.history(period="1y", interval="1d", auto_adjust=False, raise_errors=True)
+    storia = t.history(period="2y", interval="1d", auto_adjust=False, raise_errors=True)
     storia = storia.dropna(subset=["Close"])
     if len(storia) < 20:
         raise RuntimeError(f"Yahoo {simbolo}: solo {len(storia)} punti")
@@ -126,7 +126,7 @@ def da_stooq(simbolo):
     if not testo.startswith("Date"):
         raise RuntimeError(f"Stooq {simbolo}: risposta inattesa: {testo[:80]!r}")
     righe = list(csv.DictReader(io.StringIO(testo)))
-    limite = (dt.date.today() - dt.timedelta(days=366)).isoformat()
+    limite = (dt.date.today() - dt.timedelta(days=740)).isoformat()
     punti = [(r["Date"], float(r["Close"])) for r in righe if r.get("Date", "") >= limite and r.get("Close")]
     if len(punti) < 20:
         raise RuntimeError(f"Stooq {simbolo}: solo {len(punti)} punti")
