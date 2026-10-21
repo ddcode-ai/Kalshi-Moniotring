@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-21T11:59+00:00",
+ "aggiornato": "2026-10-21T12:24+00:00",
  "mercati": [
   {
    "id": "iran",
@@ -30,9 +30,9 @@
      "ticker": "KXUSAIRANAGREEMENT-27",
      "esito": "Entro il 1° gennaio 2027",
      "etichetta": "Gen 2027",
-     "prob": 9.45,
+     "prob": 8.95,
      "acquisto": 7.9,
-     "vendita": 11.0,
+     "vendita": 10.0,
      "volume": 1849117,
      "chiusura": "2027-01-01T15:00:00Z",
      "stato": "active"
@@ -63,10 +63,10 @@
      "ticker": "KXUSAIRANAGREEMENT-27-28",
      "esito": "Entro il 1° gennaio 2028",
      "etichetta": "Gen 2028",
-     "prob": 32.5,
+     "prob": 33.0,
      "acquisto": 32.0,
-     "vendita": 33.0,
-     "volume": 124933,
+     "vendita": 34.0,
+     "volume": 124991,
      "chiusura": "2028-01-01T15:00:00Z",
      "stato": "active"
     },
@@ -142,7 +142,7 @@
      "prob": 64.5,
      "acquisto": 64.0,
      "vendita": 65.0,
-     "volume": 6226323,
+     "volume": 6226570,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -153,7 +153,7 @@
      "prob": 26.5,
      "acquisto": 26.0,
      "vendita": 27.0,
-     "volume": 4898928,
+     "volume": 4899632,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -164,7 +164,7 @@
      "prob": 9.2,
      "acquisto": 9.1,
      "vendita": 9.3,
-     "volume": 20619019,
+     "volume": 20627856,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -175,7 +175,7 @@
      "prob": 0.55,
      "acquisto": 0.5,
      "vendita": 0.6,
-     "volume": 14102555,
+     "volume": 14367064,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     }
@@ -191,7 +191,7 @@
      "prob": 53.5,
      "acquisto": 53.0,
      "vendita": 54.0,
-     "volume": 237443,
+     "volume": 237461,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -279,7 +279,7 @@
      "prob": 1.45,
      "acquisto": 1.4,
      "vendita": 1.5,
-     "volume": 98342,
+     "volume": 98392,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     }
