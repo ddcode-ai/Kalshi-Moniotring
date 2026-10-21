@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-21T09:04+00:00",
+ "aggiornato": "2026-10-21T09:13+00:00",
  "mercati": [
   {
    "id": "iran",
@@ -8,9 +8,9 @@
      "ticker": "KXUSAIRANAGREEMENT-27-26NOV",
      "esito": "Entro il 1° novembre 2026",
      "etichetta": "Nov 2026",
-     "prob": 3.0,
+     "prob": 2.5,
      "acquisto": 2.0,
-     "vendita": 4.0,
+     "vendita": 3.0,
      "volume": 1283420,
      "chiusura": "2026-11-01T15:00:00Z",
      "stato": "active"
@@ -142,7 +142,7 @@
      "prob": 64.5,
      "acquisto": 64.0,
      "vendita": 65.0,
-     "volume": 6216938,
+     "volume": 6221528,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -153,7 +153,7 @@
      "prob": 26.5,
      "acquisto": 26.0,
      "vendita": 27.0,
-     "volume": 4887046,
+     "volume": 4887751,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -161,10 +161,10 @@
      "ticker": "KXBALANCEPOWERCOMBO-27FEB-RR",
      "esito": "Repubblicani a Camera e Senato",
      "etichetta": "Rep. entrambe",
-     "prob": 9.15,
+     "prob": 9.2,
      "acquisto": 9.1,
-     "vendita": 9.2,
-     "volume": 20608069,
+     "vendita": 9.3,
+     "volume": 20613217,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -175,7 +175,7 @@
      "prob": 0.55,
      "acquisto": 0.5,
      "vendita": 0.6,
-     "volume": 14030097,
+     "volume": 14030860,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     }
