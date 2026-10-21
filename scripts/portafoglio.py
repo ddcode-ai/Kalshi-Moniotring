@@ -18,37 +18,38 @@ import urllib.request
 
 DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 
-# (id, nome, simboli Yahoo da provare in ordine, simbolo Stooq o None, tipo)
+# (id, nome, simboli Yahoo da provare in ordine, simbolo Stooq o None, tipo, codice Bloomberg)
 # tipo: azione, etf, cambio, materia, tasso
 TITOLI = [
-    ("wdc", "Western Digital", ["WDC"], "wdc.us", "azione"),
-    ("stx", "Seagate", ["STX"], "stx.us", "azione"),
-    ("spot", "Spotify Technology", ["SPOT"], "spot.us", "azione"),
-    ("enx", "Euronext", ["ENX.PA"], None, "azione"),
-    ("tsm", "Taiwan Semiconductor (ADR)", ["TSM"], "tsm.us", "azione"),
-    ("rok", "Rockwell Automation", ["ROK"], "rok.us", "azione"),
-    ("abb", "ABB", ["ABBN.SW"], None, "azione"),
-    ("medacta", "Medacta", ["MOVE.SW"], None, "azione"),
-    ("moncler", "Moncler", ["MONC.MI"], None, "azione"),
-    ("schneider", "Schneider Electric", ["SU.PA"], None, "azione"),
-    ("us10y", "Treasury USA 10 anni (rendimento)", ["^TNX"], "10usy.b", "tasso"),
-    ("usdchf", "USD/CHF", ["CHF=X", "USDCHF=X"], "usdchf", "cambio"),
-    ("siemensenergy", "Siemens Energy", ["ENR.DE"], None, "azione"),
-    ("hermes", "Hermès International", ["RMS.PA"], None, "azione"),
-    ("oro", "Oro (XAU/USD)", ["XAUUSD=X", "GC=F"], "xauusd", "materia"),
-    ("lonza", "Lonza Group", ["LONN.SW"], None, "azione"),
-    ("wdef", "WisdomTree Europe Defence UCITS (EUR)", ["WDEF.MI", "WDEF.DE", "WDEF.AS", "WDEF.L"], None, "etf"),
-    ("nvda", "NVIDIA", ["NVDA"], "nvda.us", "azione"),
-    ("msft", "Microsoft", ["MSFT"], "msft.us", "azione"),
-    ("ftnt", "Fortinet", ["FTNT"], "ftnt.us", "azione"),
-    ("amd", "AMD", ["AMD"], "amd.us", "azione"),
-    ("mu", "Micron", ["MU"], "mu.us", "azione"),
-    ("aapl", "Apple", ["AAPL"], "aapl.us", "azione"),
-    ("googl", "Alphabet A", ["GOOGL"], "googl.us", "azione"),
-    ("vrt", "Vertiv Holdings", ["VRT"], "vrt.us", "azione"),
-    ("meta", "Meta Platforms", ["META"], "meta.us", "azione"),
-    ("panw", "Palo Alto Networks", ["PANW"], "panw.us", "azione"),
-    ("gev", "GE Vernova", ["GEV"], "gev.us", "azione"),
+    ("wdc", "Western Digital", ["WDC"], "wdc.us", "azione", "WDC US"),
+    ("stx", "Seagate", ["STX"], "stx.us", "azione", "STX US"),
+    ("spot", "Spotify Technology", ["SPOT"], "spot.us", "azione", "SPOT US"),
+    ("enx", "Euronext", ["ENX.PA"], None, "azione", "ENX FP"),
+    ("tsm", "Taiwan Semiconductor (ADR)", ["TSM"], "tsm.us", "azione", "TSM US"),
+    ("rok", "Rockwell Automation", ["ROK"], "rok.us", "azione", "ROK US"),
+    ("abb", "ABB", ["ABBN.SW"], None, "azione", "ABBN SW"),
+    ("medacta", "Medacta", ["MOVE.SW"], None, "azione", "MOVE SW"),
+    ("moncler", "Moncler", ["MONC.MI"], None, "azione", "MONC IM"),
+    ("schneider", "Schneider Electric", ["SU.PA"], None, "azione", "SU FP"),
+    ("us10y", "Treasury USA 10 anni (rendimento)", ["^TNX"], "10usy.b", "tasso", "USGG10YR Index"),
+    ("usdchf", "USD/CHF", ["CHF=X", "USDCHF=X"], "usdchf", "cambio", "USDCHF Curncy"),
+    ("siemensenergy", "Siemens Energy", ["ENR.DE"], None, "azione", "ENR GY"),
+    ("hermes", "Hermès International", ["RMS.PA"], None, "azione", "RMS FP"),
+    ("oro", "Oro (XAU/USD)", ["XAUUSD=X", "GC=F"], "xauusd", "materia", "XAU Curncy"),
+    ("lonza", "Lonza Group", ["LONN.SW"], None, "azione", "LONN SW"),
+    ("wdef", "WisdomTree Europe Defence UCITS (EUR)", ["WDEF.MI", "WDEF.DE", "WDEF.AS", "WDEF.L"], None, "etf", "WDEF IM"),
+    ("nvda", "NVIDIA", ["NVDA"], "nvda.us", "azione", "NVDA US"),
+    ("msft", "Microsoft", ["MSFT"], "msft.us", "azione", "MSFT US"),
+    ("ftnt", "Fortinet", ["FTNT"], "ftnt.us", "azione", "FTNT US"),
+    ("amd", "AMD", ["AMD"], "amd.us", "azione", "AMD US"),
+    ("mu", "Micron", ["MU"], "mu.us", "azione", "MU US"),
+    ("aapl", "Apple", ["AAPL"], "aapl.us", "azione", "AAPL US"),
+    ("googl", "Alphabet A", ["GOOGL"], "googl.us", "azione", "GOOGL US"),
+    ("vrt", "Vertiv Holdings", ["VRT"], "vrt.us", "azione", "VRT US"),
+    ("meta", "Meta Platforms", ["META"], "meta.us", "azione", "META US"),
+    ("panw", "Palo Alto Networks", ["PANW"], "panw.us", "azione", "PANW US"),
+    ("gev", "GE Vernova", ["GEV"], "gev.us", "azione", "GEV US"),
+    ("amzn", "Amazon", ["AMZN"], "amzn.us", "azione", "AMZN US"),
 ]
 
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
@@ -147,7 +148,7 @@ def main():
             vecchi = {}
 
     titoli, falliti, ok = [], [], []
-    for ident, nome, simboli_yahoo, simbolo_stooq, tipo in TITOLI:
+    for ident, nome, simboli_yahoo, simbolo_stooq, tipo, bbg in TITOLI:
         risultato, errori = None, []
         for s in simboli_yahoo:
             try:
@@ -164,6 +165,7 @@ def main():
         if risultato is None:
             falliti.append(f"{nome}: {' | '.join(errori)}")
             if ident in vecchi:  # tiene i dati precedenti piuttosto che far sparire il titolo
+                vecchi[ident]["bbg"] = bbg
                 titoli.append(vecchi[ident])
             continue
         valuta = risultato["valuta"] or (vecchi.get(ident, {}).get("valuta", ""))
@@ -172,7 +174,7 @@ def main():
         else:
             nota = ""
         titoli.append({
-            "id": ident, "nome": nome, "tipo": tipo, "simbolo": risultato["simbolo"],
+            "id": ident, "nome": nome, "tipo": tipo, "simbolo": risultato["simbolo"], "bbg": bbg,
             "valuta": valuta, "mercato": risultato["mercato"], "fonte": risultato["fonte"], "nota": nota,
             "punti": [[d, arrotonda(v)] for d, v in risultato["punti"]],
         })

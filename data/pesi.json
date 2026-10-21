@@ -1,0 +1,19 @@
+{
+ "nota": "Pesi in portafoglio in percentuale, con i codici Bloomberg. I titoli non elencati compaiono come 'not in portfolio'. Per cambiare un peso modifica il numero e salva.",
+ "aggiornato": "2026-10-21",
+ "pesi": {
+  "MONC IM": 4.8,
+  "RMS FP": 4.7,
+  "ENX FP": 23.4,
+  "MSFT US": 10.0,
+  "AAPL US": 7.2,
+  "GOOGL US": 7.1,
+  "META US": 6.6,
+  "AMZN US": 4.7,
+  "NVDA US": 7.3,
+  "TSM US": 7.3,
+  "AMD US": 3.4,
+  "PANW US": 6.7,
+  "FTNT US": 6.8
+ }
+}

@@ -45,7 +45,11 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,16.5rem),1fr));gap:12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 10px;min-width:0;display:flex;flex-direction:column;gap:2px}
 .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
-.name{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who{display:flex;align-items:baseline;gap:6px;min-width:0}
+.name{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.peso{flex:none;font-size:.72rem;font-weight:500;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--panel);font-variant-numeric:tabular-nums}
+.peso.no{background:none;color:var(--muted);font-weight:400;border:1px solid var(--line)}
+.card.held{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
 .sym{font-size:.75rem;color:var(--muted);white-space:nowrap}
 .vals{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
 .last{font-family:var(--serif);font-size:1.45rem}
@@ -81,7 +85,12 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
     <span>Ordina per</span>
     <button type="button" id="ord-lista" data-ord="lista" aria-pressed="true">Ordine della lista</button>
     <button type="button" id="ord-var" data-ord="var" aria-pressed="false">Variazione a 1 anno</button>
+    <button type="button" id="ord-peso" data-ord="peso" aria-pressed="false">Peso</button>
     <button type="button" id="ord-nome" data-ord="nome" aria-pressed="false">Nome</button>
+  </div>
+  <div class="toolbar" role="group" aria-label="Filtro">
+    <span>Mostra</span>
+    <button type="button" id="filtro-port" data-filtro="1" aria-pressed="false">Solo in portafoglio</button>
   </div>
   <div class="toolbar" role="group" aria-label="Medie mobili">
     <span>Medie mobili</span>
@@ -105,7 +114,8 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const VALUTE = { USD: '$', EUR: '€', CHF: 'CHF', GBP: '£', GBp: 'p' };
-  let T = [], ordine = 'lista', MA = { 50: true, 200: true };
+  let T = [], ordine = 'lista', MA = { 50: true, 200: true }, soloPort = false, PESI = null;
+  try { soloPort = localStorage.getItem('solo-portafoglio') === '1'; } catch (e) {}
   try { ordine = localStorage.getItem('ordine-portafoglio') || 'lista'; } catch (e) {}
   try { const m = JSON.parse(localStorage.getItem('medie-portafoglio') || 'null'); if (m) MA = m; } catch (e) {}
 
@@ -142,6 +152,12 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
     const ord = azioni.slice().sort((a, b) => b.variazione - a.variazione);
     const med = d3.median(azioni, t => t.variazione);
     const stat = (lab, big, small, c) => { const s = el('div', 'stat'); s.append(el('div', 'lab', lab)); const b = el('div', 'big ' + (c || ''), big); s.append(b); if (small) s.append(el('div', 'small', small)); box.append(s); };
+    const held = T.filter(t => t.peso != null && !t.tasso);
+    if (held.length) {
+      const wTot = d3.sum(held, t => t.peso);
+      const wr = d3.sum(held, t => t.peso * t.variazione) / wTot;
+      stat('Portafoglio, rendimento a 1 anno', (wr > 0 ? '+' : wr < 0 ? '−' : '') + it(Math.abs(wr), 1) + '%', `Media ponderata dei ${held.length} titoli in portafoglio, in valuta locale`, wr > 0 ? 'up' : 'down');
+    }
     stat('In rialzo su un anno', `${su} su ${azioni.length}`, 'Titoli, ETF, cambi e materie prime');
     if (med != null) stat('Variazione mediana', (med > 0 ? '+' : med < 0 ? '−' : '') + it(Math.abs(med), 1) + '%', 'Metà dei titoli ha fatto meglio, metà peggio', med > 0 ? 'up' : 'down');
     if (ord.length) { stat('Migliore', fVar(ord[0]), ord[0].nome, cls(ord[0])); stat('Peggiore', fVar(ord[ord.length - 1]), ord[ord.length - 1].nome, cls(ord[ord.length - 1])); }
@@ -149,13 +165,16 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
 
   function griglia() {
     const g = document.getElementById('griglia'); g.textContent = '';
-    let lista = T.slice();
+    let lista = soloPort ? T.filter(t => t.peso != null) : T.slice();
+    if (ordine === 'peso') lista.sort((a, b) => (b.peso ?? -1) - (a.peso ?? -1));
     if (ordine === 'var') lista.sort((a, b) => (b.tasso ? -1e9 : b.variazione) - (a.tasso ? -1e9 : a.variazione));
     if (ordine === 'nome') lista.sort((a, b) => a.nome.localeCompare(b.nome, 'it'));
     lista.forEach(t => {
-      const c = el('article', 'card');
-      const top = el('div', 'top'); const n = el('div', 'name', t.nome); n.title = t.nome;
-      top.append(n, el('div', 'sym', t.simbolo));
+      const c = el('article', 'card' + (t.peso != null ? ' held' : ''));
+      const top = el('div', 'top'); const who = el('div', 'who'); const n = el('div', 'name', t.nome); n.title = t.nome;
+      who.append(n);
+      if (PESI) who.append(t.peso != null ? el('span', 'peso', it(t.peso, 1) + '%') : el('span', 'peso no', 'not in portfolio'));
+      top.append(who, el('div', 'sym', t.simbolo));
       const vals = el('div', 'vals');
       const l = el('div', 'last', fVal(t, t.last));
       if (!t.tasso && t.valuta) l.append(el('small', null, VALUTE[t.valuta] || t.valuta));
@@ -217,7 +236,12 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   function aggiornaBottoni() {
     document.querySelectorAll('.toolbar button[data-ord]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ord === ordine)));
     document.querySelectorAll('.toolbar button[data-ma]').forEach(b => b.setAttribute('aria-pressed', String(!!MA[b.dataset.ma])));
+    document.getElementById('filtro-port').setAttribute('aria-pressed', String(soloPort));
   }
+  document.getElementById('filtro-port').addEventListener('click', () => {
+    soloPort = !soloPort; try { localStorage.setItem('solo-portafoglio', soloPort ? '1' : '0'); } catch (e) {}
+    aggiornaBottoni(); griglia();
+  });
   document.querySelectorAll('.toolbar button[data-ma]').forEach(b => b.addEventListener('click', () => {
     MA[b.dataset.ma] = !MA[b.dataset.ma]; try { localStorage.setItem('medie-portafoglio', JSON.stringify(MA)); } catch (e) {}
     aggiornaBottoni(); griglia();
@@ -228,8 +252,14 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   }));
   aggiornaBottoni();
 
-  fetch('data/portafoglio.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(d => {
+  const pesiP = fetch('data/pesi.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
+  fetch('data/portafoglio.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(async d => {
+    const pj = await pesiP;
+    const norm = c => String(c || '').replace(/\s+(Equity|Index|Curncy|Comdty)$/i, '').trim().toUpperCase();
+    if (pj && pj.pesi) { PESI = {}; Object.entries(pj.pesi).forEach(([k, v]) => { PESI[norm(k)] = +v; }); }
     T = d.titoli.filter(t => t.punti && t.punti.length > 1).map(calcola);
+    T.forEach(t => { t.peso = PESI && PESI[norm(t.bbg)] != null ? PESI[norm(t.bbg)] : null; });
+    if (!PESI) { const b = document.getElementById('filtro-port'); b.parentElement.hidden = true; soloPort = false; document.getElementById('ord-peso').hidden = true; }
     const agg = new Date(d.aggiornato);
     let testo = 'Aggiornato il ' + agg.toLocaleString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Zurich' });
     if (T.length) testo += ' · grafici dal ' + fdata(T[0].anno[0].s);
