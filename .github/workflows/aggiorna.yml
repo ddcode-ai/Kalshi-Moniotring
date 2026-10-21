@@ -38,7 +38,9 @@ jobs:
       - name: Scarica i prezzi del portafoglio
         if: github.event_name != 'push'
         continue-on-error: true
-        run: python scripts/portafoglio.py
+        run: |
+          pip install --quiet yfinance
+          python scripts/portafoglio.py
 
       - name: Salva i nuovi dati nel repository
         if: github.event_name != 'push'

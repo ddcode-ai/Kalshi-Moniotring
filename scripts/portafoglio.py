@@ -100,41 +100,24 @@ def crumb_yahoo():
 
 
 def da_yahoo(simbolo):
-    for host in ("query1", "query2"):
-        url = (f"https://{host}.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(simbolo)}"
-               "?range=1y&interval=1d&includePrePost=false&events=")
-        if crumb_yahoo():
-            url += "&crumb=" + urllib.parse.quote(crumb_yahoo())
-        try:
-            dati = json.loads(scarica(url))
-        except Exception as e:
-            ultimo_errore = e
-            continue
-        res = (dati.get("chart") or {}).get("result") or []
-        if not res:
-            ultimo_errore = RuntimeError("risposta vuota")
-            continue
-        r = res[0]
-        meta = r.get("meta", {})
-        offset = int(meta.get("gmtoffset") or 0)
-        chiusure = ((r.get("indicators") or {}).get("quote") or [{}])[0].get("close") or []
-        punti = {}
-        for ts, c in zip(r.get("timestamp") or [], chiusure):
-            if c is None:
-                continue
-            giorno = dt.datetime.fromtimestamp(ts + offset, dt.timezone.utc).date().isoformat()
-            punti[giorno] = c
-        if len(punti) < 20:
-            ultimo_errore = RuntimeError(f"solo {len(punti)} punti")
-            continue
-        return {
-            "punti": sorted(punti.items()),
-            "valuta": meta.get("currency") or "",
-            "mercato": meta.get("fullExchangeName") or meta.get("exchangeName") or "",
-            "simbolo": simbolo,
-            "fonte": "Yahoo Finance",
-        }
-    raise RuntimeError(f"Yahoo {simbolo}: {ultimo_errore}")
+    """Usa la libreria yfinance, che imita un browser e non viene bloccata come le richieste semplici."""
+    import yfinance as yf
+    t = yf.Ticker(simbolo)
+    storia = t.history(period="1y", interval="1d", auto_adjust=False, raise_errors=True)
+    storia = storia.dropna(subset=["Close"])
+    if len(storia) < 20:
+        raise RuntimeError(f"Yahoo {simbolo}: solo {len(storia)} punti")
+    punti = {}
+    for indice, riga in storia.iterrows():
+        punti[indice.date().isoformat()] = float(riga["Close"])
+    meta = getattr(t, "history_metadata", None) or {}
+    return {
+        "punti": sorted(punti.items()),
+        "valuta": meta.get("currency") or "",
+        "mercato": meta.get("fullExchangeName") or meta.get("exchangeName") or "",
+        "simbolo": simbolo,
+        "fonte": "Yahoo Finance",
+    }
 
 
 def da_stooq(simbolo):

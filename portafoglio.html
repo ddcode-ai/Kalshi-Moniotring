@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portafoglio a un anno</title>
+<meta name="description" content="Andamento degli ultimi 12 mesi dei titoli del portafoglio, aggiornato ogni giorno.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400&display=swap">
+<style>
+:root{
+  --bg:#f7f7f4; --panel:#ffffff; --fg:#1d1f1c; --muted:#62665f; --line:#e3e4de; --grid:#ecede8; --rule:#9a9d95;
+  --up:#2e7d4f; --down:#b3402a; --flat:#62665f; --accent:#2f6db5;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141613; --panel:#1c1f1b; --fg:#ecede8; --muted:#a3a79e; --line:#2d312b; --grid:#262a25; --rule:#6c7068;
+  --up:#6cc08a; --down:#ec8a5f; --flat:#a3a79e; --accent:#6ea6ea; color-scheme:dark;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:24px}
+nav{display:flex;gap:18px;font-size:.9rem;border-bottom:1px solid var(--line);padding-bottom:10px}
+nav a{color:var(--muted);text-decoration:none;padding-bottom:10px;margin-bottom:-11px}
+nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--accent);font-weight:500}
+h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;margin:0}
+.sub{color:var(--muted);font-size:.85rem;margin:6px 0 0}
+.lead{margin:10px 0 0;max-width:70ch}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.stat .lab{font-size:.8rem;color:var(--muted)}
+.stat .big{font-family:var(--serif);font-size:1.7rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.stat .small{font-size:.85rem;color:var(--muted)}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.toolbar button{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
+.toolbar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:500}
+.toolbar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,16.5rem),1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 10px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.name{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sym{font-size:.75rem;color:var(--muted);white-space:nowrap}
+.vals{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
+.last{font-family:var(--serif);font-size:1.45rem}
+.last small{font-family:var(--sans);font-size:.75rem;color:var(--muted);margin-left:4px}
+.chg{font-weight:500}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--flat)}
+.spark{position:relative;height:78px;margin-top:4px}
+.spark svg{display:block}
+.range{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:.72rem;color:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:3px 8px;font-size:.75rem;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:2;top:-4px}
+.empty{color:var(--muted);font-size:.9rem;padding:24px 0}
+.foot{font-size:.8rem;color:var(--muted);max-width:80ch;margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav aria-label="Pagine del sito">
+    <a href="./">Mercati Kalshi</a>
+    <a href="portafoglio.html" aria-current="page">Portafoglio</a>
+  </nav>
+
+  <header>
+    <h1>Portafoglio a un anno</h1>
+    <p class="sub" id="aggiornato">Caricamento dei dati…</p>
+    <p class="lead">Andamento degli ultimi 12 mesi di ogni titolo della lista, con prezzo di chiusura giornaliero. Ogni grafico ha la sua scala, per mostrare la forma del movimento: per confrontare i titoli tra loro usa la variazione percentuale.</p>
+  </header>
+
+  <div class="summary" id="sintesi"></div>
+
+  <div class="toolbar" role="group" aria-label="Ordina i titoli">
+    <span>Ordina per</span>
+    <button type="button" id="ord-lista" data-ord="lista" aria-pressed="true">Ordine della lista</button>
+    <button type="button" id="ord-var" data-ord="var" aria-pressed="false">Variazione a 1 anno</button>
+    <button type="button" id="ord-nome" data-ord="nome" aria-pressed="false">Nome</button>
+  </div>
+
+  <div class="grid" id="griglia"></div>
+
+  <p class="foot">Prezzi di chiusura giornalieri da Yahoo Finance, aggiornati automaticamente ogni mattina; ogni titolo è nella sua valuta di quotazione. Per il Treasury a 10 anni il valore è il rendimento e la variazione è in punti percentuali. Pagina informativa, non è un consiglio di investimento.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(function () {
+  const MESI = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  const it = (v, dec) => v.toLocaleString('it-IT', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  const dec = v => Math.abs(v) >= 1000 ? 0 : Math.abs(v) >= 10 ? 2 : 4;
+  const fdata = s => { const d = new Date(s + 'T00:00:00Z'); return d.getUTCDate() + ' ' + MESI[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const VALUTE = { USD: '$', EUR: '€', CHF: 'CHF', GBP: '£', GBp: 'p' };
+  let T = [], ordine = 'lista';
+  try { ordine = localStorage.getItem('ordine-portafoglio') || 'lista'; } catch (e) {}
+
+  function calcola(t) {
+    const p = t.punti, last = p[p.length - 1][1], first = p[0][1];
+    const tasso = t.tipo === 'tasso';
+    const variazione = tasso ? last - first : (last / first - 1) * 100;
+    const vals = p.map(x => x[1]);
+    return Object.assign(t, { last, first, variazione, tasso, min: Math.min(...vals), max: Math.max(...vals) });
+  }
+  const fVar = t => (t.variazione > 0 ? '+' : t.variazione < 0 ? '−' : '±') + it(Math.abs(t.variazione), 1) + (t.tasso ? ' pt' : '%');
+  const fVal = (t, v) => t.tasso ? it(v, 2) + '%' : it(v, dec(v));
+  const cls = t => t.variazione > 0.05 ? 'up' : t.variazione < -0.05 ? 'down' : 'flat';
+
+  function sintesi() {
+    const box = document.getElementById('sintesi'); box.textContent = '';
+    const azioni = T.filter(t => !t.tasso);
+    const su = azioni.filter(t => t.variazione > 0).length;
+    const ord = azioni.slice().sort((a, b) => b.variazione - a.variazione);
+    const med = d3.median(azioni, t => t.variazione);
+    const stat = (lab, big, small, c) => { const s = el('div', 'stat'); s.append(el('div', 'lab', lab)); const b = el('div', 'big ' + (c || ''), big); s.append(b); if (small) s.append(el('div', 'small', small)); box.append(s); };
+    stat('In rialzo su un anno', `${su} su ${azioni.length}`, 'Titoli, ETF, cambi e materie prime');
+    if (med != null) stat('Variazione mediana', (med > 0 ? '+' : med < 0 ? '−' : '') + it(Math.abs(med), 1) + '%', 'Metà dei titoli ha fatto meglio, metà peggio', med > 0 ? 'up' : 'down');
+    if (ord.length) { stat('Migliore', fVar(ord[0]), ord[0].nome, cls(ord[0])); stat('Peggiore', fVar(ord[ord.length - 1]), ord[ord.length - 1].nome, cls(ord[ord.length - 1])); }
+  }
+
+  function griglia() {
+    const g = document.getElementById('griglia'); g.textContent = '';
+    let lista = T.slice();
+    if (ordine === 'var') lista.sort((a, b) => (b.tasso ? -1e9 : b.variazione) - (a.tasso ? -1e9 : a.variazione));
+    if (ordine === 'nome') lista.sort((a, b) => a.nome.localeCompare(b.nome, 'it'));
+    lista.forEach(t => {
+      const c = el('article', 'card');
+      const top = el('div', 'top'); const n = el('div', 'name', t.nome); n.title = t.nome;
+      top.append(n, el('div', 'sym', t.simbolo));
+      const vals = el('div', 'vals');
+      const l = el('div', 'last', fVal(t, t.last));
+      if (!t.tasso && t.valuta) l.append(el('small', null, VALUTE[t.valuta] || t.valuta));
+      vals.append(l, el('div', 'chg ' + cls(t), fVar(t)));
+      const sp = el('div', 'spark');
+      const r = el('div', 'range');
+      r.append(el('span', null, 'Min ' + fVal(t, t.min)), el('span', null, 'Max ' + fVal(t, t.max)));
+      c.append(top, vals, sp, r);
+      if (t.nota) c.append(el('div', 'note', t.nota));
+      g.append(c);
+      disegna(sp, t);
+    });
+  }
+
+  function disegna(box, t) {
+    const W = Math.max(box.clientWidth || 240, 160), H = 78;
+    const pts = t.punti.map(p => ({ d: new Date(p[0] + 'T00:00:00Z'), v: p[1], s: p[0] }));
+    const x = d3.scaleUtc(d3.extent(pts, p => p.d), [2, W - 4]);
+    const pad = (t.max - t.min) * 0.08 || 1;
+    const y = d3.scaleLinear([t.min - pad, t.max + pad], [H - 2, 2]);
+    const col = css(t.variazione > 0.05 ? '--up' : t.variazione < -0.05 ? '--down' : '--flat');
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+      .attr('aria-label', `${t.nome}: ${fVar(t)} in un anno`);
+    const id = 'g' + t.id;
+    const gr = svg.append('defs').append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+    [[0, .22], [.6, .06], [1, 0]].forEach(([o, a]) => gr.append('stop').attr('offset', o).attr('stop-color', col).attr('stop-opacity', a));
+    svg.append('line').attr('x1', 2).attr('x2', W - 4).attr('y1', y(t.first)).attr('y2', y(t.first)).attr('stroke', css('--rule')).attr('stroke-dasharray', '3 3').attr('stroke-width', 1);
+    svg.append('path').datum(pts).attr('fill', `url(#${id})`).attr('d', d3.area().x(p => x(p.d)).y0(H).y1(p => y(p.v)));
+    svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 1.6).attr('stroke-linejoin', 'round').attr('d', d3.line().x(p => x(p.d)).y(p => y(p.v)));
+    svg.append('circle').attr('cx', x(pts[pts.length - 1].d)).attr('cy', y(t.last)).attr('r', 2.6).attr('fill', col);
+    const dot = svg.append('circle').attr('r', 3).attr('fill', col).style('display', 'none');
+    const tip = d3.select(box).append('div').attr('class', 'tip').style('display', 'none');
+    const bis = d3.bisector(p => p.d).center;
+    svg.append('rect').attr('width', W).attr('height', H).attr('fill', 'transparent')
+      .on('pointermove', ev => {
+        const [px] = d3.pointer(ev); const p = pts[bis(pts, x.invert(px))];
+        dot.attr('cx', x(p.d)).attr('cy', y(p.v)).style('display', null);
+        tip.text(fdata(p.s) + ' · ' + fVal(t, p.v)).style('display', null);
+        const sc = box.clientWidth / W, tw = tip.node().offsetWidth;
+        let left = x(p.d) * sc - tw / 2; left = Math.max(0, Math.min(left, box.clientWidth - tw));
+        tip.style('left', left + 'px');
+      })
+      .on('pointerleave', () => { dot.style('display', 'none'); tip.style('display', 'none'); });
+  }
+
+  function aggiornaBottoni() {
+    document.querySelectorAll('.toolbar button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ord === ordine)));
+  }
+  document.querySelectorAll('.toolbar button').forEach(b => b.addEventListener('click', () => {
+    ordine = b.dataset.ord; try { localStorage.setItem('ordine-portafoglio', ordine); } catch (e) {}
+    aggiornaBottoni(); griglia();
+  }));
+  aggiornaBottoni();
+
+  fetch('data/portafoglio.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(d => {
+    T = d.titoli.filter(t => t.punti && t.punti.length > 1).map(calcola);
+    const agg = new Date(d.aggiornato);
+    let testo = 'Aggiornato il ' + agg.toLocaleString('it-IT', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Zurich' });
+    if (T.length) testo += ' · dati dal ' + fdata(T[0].punti[0][0]);
+    if (d.non_aggiornati && d.non_aggiornati.length) testo += ' · non aggiornati oggi: ' + d.non_aggiornati.join(', ');
+    document.getElementById('aggiornato').textContent = testo;
+    sintesi(); griglia();
+  }).catch(() => {
+    document.getElementById('aggiornato').textContent = 'I dati non sono ancora disponibili. Riprova tra qualche minuto.';
+    document.getElementById('griglia').append(el('p', 'empty', 'Nessun dato da mostrare.'));
+  });
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (T.length) griglia(); }, 150); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (T.length) griglia(); });
+})();
+</script>
+</body>
+</html>

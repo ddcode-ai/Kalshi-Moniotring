@@ -24,7 +24,7 @@
 }}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
-.wrap{max-width:1180px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
+.wrap{max-width:1180px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
 h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;margin:0;text-wrap:balance}
 .sub{color:var(--muted);font-size:.85rem;margin:6px 0 0}
 .lead{margin:10px 0 0;max-width:68ch}
@@ -60,12 +60,19 @@ td.v{text-align:right;color:var(--muted);font-size:.8rem;padding-left:8px;white-
 .err{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.85rem;min-height:6rem}
 .err::before{content:"";width:.4rem;height:.4rem;border-radius:50%;background:var(--bad)}
 .foot{font-size:.8rem;color:var(--muted);max-width:80ch;margin:0}
+nav{display:flex;gap:18px;font-size:.9rem;border-bottom:1px solid var(--line);padding-bottom:10px}
+nav a{color:var(--muted);text-decoration:none;padding-bottom:10px;margin-bottom:-11px}
+nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--s1);font-weight:500}
 .foot a{color:inherit}
 @media (max-width:30rem){.v{display:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <nav aria-label="Pagine del sito">
+    <a href="./" aria-current="page">Mercati Kalshi</a>
+    <a href="portafoglio.html">Portafoglio</a>
+  </nav>
   <header>
     <h1>Kalshi Osservatorio</h1>
     <p class="sub" id="aggiornato">Caricamento dei dati…</p>
