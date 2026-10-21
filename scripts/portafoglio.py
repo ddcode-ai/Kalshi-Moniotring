@@ -125,7 +125,7 @@ def main():
         except Exception:
             vecchi = {}
 
-    titoli, falliti = [], []
+    titoli, falliti, ok = [], [], []
     for ident, nome, simboli_yahoo, simbolo_stooq, tipo in TITOLI:
         risultato, errori = None, []
         for s in simboli_yahoo:
@@ -156,10 +156,13 @@ def main():
             "punti": [[d, arrotonda(v)] for d, v in risultato["punti"]],
         })
         print(f"ok  {nome}: {risultato['simbolo']} ({risultato['fonte']}), {len(risultato['punti'])} punti")
+        ok.append(f"{nome}: {risultato['simbolo']} ({risultato['fonte']})")
         time.sleep(0.4)
 
     for f in falliti:
         print("NO ", f, file=sys.stderr)
+        print(f"::warning title=Portafoglio::{f[:900]}")
+    print(f"::notice title=Portafoglio::Scaricati {len(ok)} su {len(TITOLI)}: " + "; ".join(ok)[:3000])
     if len(falliti) == len(TITOLI):
         print("Nessun titolo scaricato: dati non modificati.", file=sys.stderr)
         sys.exit(1)
