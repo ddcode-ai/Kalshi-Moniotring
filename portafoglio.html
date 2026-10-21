@@ -186,7 +186,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
     const id = 'g' + t.id;
     const gr = svg.append('defs').append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
     [[0, .22], [.6, .06], [1, 0]].forEach(([o, a]) => gr.append('stop').attr('offset', o).attr('stop-color', col).attr('stop-opacity', a));
-    svg.append('line').attr('x1', 2).attr('x2', W - 4).attr('y1', y(t.first)).attr('y2', y(t.first)).attr('stroke', css('--rule')).attr('stroke-dasharray', '3 3').attr('stroke-width', 1);
+    svg.append('line').attr('x1', 2).attr('x2', W - 4).attr('y1', y(t.first)).attr('y2', y(t.first)).attr('stroke', css('--rule')).attr('stroke-dasharray', '1 3').attr('stroke-opacity', .8).attr('stroke-width', 1);
     svg.append('path').datum(pts).attr('fill', `url(#${id})`).attr('d', d3.area().x(p => x(p.d)).y0(H).y1(p => y(p.v)));
     svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 1.6).attr('stroke-linejoin', 'round').attr('d', d3.line().x(p => x(p.d)).y(p => y(p.v)));
     [[50, '--ma50', null], [200, '--ma200', '4 2']].forEach(([n, c, dash]) => {
