@@ -21,6 +21,7 @@
   --up:#6cc08a; --down:#ec8a5f; --flat:#a3a79e; --accent:#6ea6ea; --ma50:#6ea6ea; --ma200:#e0b25c; color-scheme:dark;
 }}
 *{box-sizing:border-box}
+.riepilogo h2{font-size:1.15rem;font-weight:500;margin:0 0 12px}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
 .wrap{max-width:1180px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:24px}
 nav{display:flex;gap:18px;font-size:.9rem;border-bottom:1px solid var(--line);padding-bottom:10px}
@@ -83,7 +84,6 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
     <p class="lead">Andamento degli ultimi 12 mesi di ogni titolo della lista, con prezzo di chiusura giornaliero. Le linee sottili sono le medie mobili a 50 e 200 giorni di Borsa, calcolate sui prezzi di chiusura. Sotto ogni grafico c'è l'RSI a 14 giorni: sopra 70 il titolo è considerato ipercomprato, sotto 30 ipervenduto. Ogni grafico ha la sua scala, per mostrare la forma del movimento: per confrontare i titoli tra loro usa la variazione percentuale.</p>
   </header>
 
-  <div class="summary" id="sintesi"></div>
 
   <div class="toolbars">
   <div class="toolbar" role="group" aria-label="Ordina i titoli">
@@ -107,6 +107,11 @@ h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;marg
   </div>
 
   <div class="grid" id="griglia"></div>
+
+  <section class="riepilogo" aria-labelledby="riepilogo-titolo">
+    <h2 id="riepilogo-titolo">Riepilogo</h2>
+    <div class="summary" id="sintesi"></div>
+  </section>
 
   <p class="foot">Prezzi di chiusura giornalieri da Yahoo Finance, aggiornati automaticamente ogni mattina; ogni titolo è nella sua valuta di quotazione. Per il Treasury a 10 anni il valore è il rendimento e la variazione è in punti percentuali. Pagina informativa, non è un consiglio di investimento.</p>
 </div>

@@ -23,6 +23,7 @@
   --up:#6cc08a; --down:#ec8a5f; --bad:#ec8a5f; color-scheme:dark;
 }}
 *{box-sizing:border-box}
+.riepilogo h2{font-size:1.15rem;font-weight:500;margin:0 0 12px}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
 .wrap{max-width:1180px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
 h1{font-family:var(--serif);font-weight:400;font-size:2rem;line-height:1.15;margin:0;text-wrap:balance}
@@ -79,8 +80,12 @@ nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--s1);font-weigh
     <p class="lead">Cinque mercati di previsione di Kalshi sotto osservazione. Ogni percentuale è il prezzo di un contratto che paga 1 dollaro se l'evento si verifica, cioè la probabilità che il mercato gli attribuisce.</p>
   </header>
 
-  <div class="tiles" id="sintesi"></div>
   <div id="sezioni" style="display:flex;flex-direction:column;gap:20px"></div>
+
+  <section class="riepilogo" aria-labelledby="riepilogo-titolo">
+    <h2 id="riepilogo-titolo">Riepilogo</h2>
+    <div class="tiles" id="sintesi"></div>
+  </section>
 
   <p class="foot">Dati dall'interfaccia pubblica di <a href="https://kalshi.com">Kalshi</a>, aggiornati automaticamente ogni mattina. La quota è il punto medio tra il miglior prezzo di acquisto e di vendita; il volume è il totale scambiato su quell'esito dall'apertura del mercato. Lo storico usa il valore di fine giornata e ripete il precedente nei giorni senza dati. Pagina informativa, non è un consiglio di investimento.</p>
 </div>
