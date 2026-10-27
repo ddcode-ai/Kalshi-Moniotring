@@ -1,5 +1,5 @@
 {
- "aggiornato": "2026-10-26T05:41+00:00",
+ "aggiornato": "2026-10-27T05:39+00:00",
  "mercati": [
   {
    "id": "iran",
@@ -11,7 +11,7 @@
      "prob": 1.5,
      "acquisto": 1.0,
      "vendita": 2.0,
-     "volume": 1461301,
+     "volume": 1477426,
      "chiusura": "2026-11-01T15:00:00Z",
      "stato": "active"
     },
@@ -22,7 +22,7 @@
      "prob": 6.5,
      "acquisto": 6.0,
      "vendita": 7.0,
-     "volume": 310182,
+     "volume": 316815,
      "chiusura": "2026-12-01T15:00:00Z",
      "stato": "active"
     },
@@ -33,7 +33,7 @@
      "prob": 9.15,
      "acquisto": 9.1,
      "vendita": 9.2,
-     "volume": 1854092,
+     "volume": 1854525,
      "chiusura": "2027-01-01T15:00:00Z",
      "stato": "active"
     },
@@ -44,7 +44,7 @@
      "prob": 14.0,
      "acquisto": 13.0,
      "vendita": 15.0,
-     "volume": 31248,
+     "volume": 31274,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -52,10 +52,10 @@
      "ticker": "KXUSAIRANAGREEMENT-27-27MAR",
      "esito": "Entro il 1° marzo 2027",
      "etichetta": "Mar 2027",
-     "prob": 20.5,
-     "acquisto": 18.0,
-     "vendita": 23.0,
-     "volume": 88931,
+     "prob": 17.5,
+     "acquisto": 16.0,
+     "vendita": 19.0,
+     "volume": 89075,
      "chiusura": "2027-03-01T15:00:00Z",
      "stato": "active"
     },
@@ -63,10 +63,10 @@
      "ticker": "KXUSAIRANAGREEMENT-27-28",
      "esito": "Entro il 1° gennaio 2028",
      "etichetta": "Gen 2028",
-     "prob": 32.5,
-     "acquisto": 32.0,
-     "vendita": 33.0,
-     "volume": 126853,
+     "prob": 30.0,
+     "acquisto": 29.0,
+     "vendita": 31.0,
+     "volume": 127166,
      "chiusura": "2028-01-01T15:00:00Z",
      "stato": "active"
     },
@@ -77,7 +77,7 @@
      "prob": 37.5,
      "acquisto": 37.0,
      "vendita": 38.0,
-     "volume": 133403,
+     "volume": 133627,
      "chiusura": "2029-01-20T15:00:00Z",
      "stato": "active"
     }
@@ -90,10 +90,10 @@
      "ticker": "KXISRAELPM-26OCT27-GEIZ",
      "esito": "Gadi Eizenkot (Yashar)",
      "etichetta": "Eizenkot",
-     "prob": 49.5,
-     "acquisto": 49.0,
-     "vendita": 50.0,
-     "volume": 191038,
+     "prob": 47.5,
+     "acquisto": 46.0,
+     "vendita": 49.0,
+     "volume": 375020,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     },
@@ -101,10 +101,21 @@
      "ticker": "KXISRAELPM-26OCT27-BNET",
      "esito": "Benjamin Netanyahu (Likud)",
      "etichetta": "Netanyahu",
-     "prob": 26.5,
-     "acquisto": 26.0,
+     "prob": 25.5,
+     "acquisto": 25.0,
+     "vendita": 26.0,
+     "volume": 1599918,
+     "chiusura": "2027-10-27T14:00:00Z",
+     "stato": "active"
+    },
+    {
+     "ticker": "KXISRAELPM-26OCT27-NOON",
+     "esito": "No one",
+     "etichetta": "one",
+     "prob": 24.0,
+     "acquisto": 21.0,
      "vendita": 27.0,
-     "volume": 1036166,
+     "volume": 11544,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     },
@@ -112,10 +123,10 @@
      "ticker": "KXISRAELPM-26OCT27-NBEN",
      "esito": "Naftali Bennett (Together)",
      "etichetta": "Bennett",
-     "prob": 11.5,
-     "acquisto": 11.0,
-     "vendita": 12.0,
-     "volume": 69469,
+     "prob": 4.0,
+     "acquisto": 3.0,
+     "vendita": 5.0,
+     "volume": 97335,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     },
@@ -123,10 +134,10 @@
      "ticker": "KXISRAELPM-26OCT27-ALIE",
      "esito": "Avigdor Lieberman (Yisrael Beiteinu)",
      "etichetta": "Lieberman",
-     "prob": 3.5,
-     "acquisto": 3.0,
-     "vendita": 4.0,
-     "volume": 51747,
+     "prob": 2.0,
+     "acquisto": 1.0,
+     "vendita": 3.0,
+     "volume": 108364,
      "chiusura": "2027-10-27T14:00:00Z",
      "stato": "active"
     }
@@ -142,7 +153,7 @@
      "prob": 63.5,
      "acquisto": 63.0,
      "vendita": 64.0,
-     "volume": 7491694,
+     "volume": 7643096,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -150,10 +161,10 @@
      "ticker": "KXBALANCEPOWERCOMBO-27FEB-DR",
      "esito": "Camera ai Democratici, Senato ai Repubblicani",
      "etichetta": "Divisa (D Camera)",
-     "prob": 26.5,
-     "acquisto": 26.0,
-     "vendita": 27.0,
-     "volume": 5964084,
+     "prob": 28.5,
+     "acquisto": 28.0,
+     "vendita": 29.0,
+     "volume": 6391915,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -161,10 +172,10 @@
      "ticker": "KXBALANCEPOWERCOMBO-27FEB-RR",
      "esito": "Repubblicani a Camera e Senato",
      "etichetta": "Rep. entrambe",
-     "prob": 10.5,
-     "acquisto": 10.0,
-     "vendita": 11.0,
-     "volume": 24175611,
+     "prob": 9.4,
+     "acquisto": 9.3,
+     "vendita": 9.5,
+     "volume": 24479206,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     },
@@ -172,10 +183,10 @@
      "ticker": "KXBALANCEPOWERCOMBO-27FEB-RD",
      "esito": "Camera ai Repubblicani, Senato ai Democratici",
      "etichetta": "Divisa (R Camera)",
-     "prob": 0.65,
-     "acquisto": 0.6,
-     "vendita": 0.7,
-     "volume": 18212769,
+     "prob": 0.8,
+     "acquisto": 0.7,
+     "vendita": 0.9,
+     "volume": 19493822,
      "chiusura": "2027-02-01T15:00:00Z",
      "stato": "active"
     }
@@ -191,7 +202,7 @@
      "prob": 49.5,
      "acquisto": 49.0,
      "vendita": 50.0,
-     "volume": 291771,
+     "volume": 293406,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -202,7 +213,7 @@
      "prob": 15.5,
      "acquisto": 15.0,
      "vendita": 16.0,
-     "volume": 56281,
+     "volume": 56420,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -213,7 +224,7 @@
      "prob": 11.5,
      "acquisto": 11.0,
      "vendita": 12.0,
-     "volume": 84886,
+     "volume": 84928,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -224,7 +235,7 @@
      "prob": 8.25,
      "acquisto": 8.2,
      "vendita": 8.3,
-     "volume": 63040,
+     "volume": 63492,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -235,7 +246,7 @@
      "prob": 4.5,
      "acquisto": 4.0,
      "vendita": 5.0,
-     "volume": 83842,
+     "volume": 84548,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -257,7 +268,7 @@
      "prob": 2.5,
      "acquisto": 2.0,
      "vendita": 3.0,
-     "volume": 32299,
+     "volume": 33005,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -268,7 +279,7 @@
      "prob": 1.45,
      "acquisto": 1.4,
      "vendita": 1.5,
-     "volume": 101701,
+     "volume": 101717,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     },
@@ -279,7 +290,7 @@
      "prob": 1.05,
      "acquisto": 1.0,
      "vendita": 1.1,
-     "volume": 46449,
+     "volume": 47449,
      "chiusura": "2028-05-30T14:00:00Z",
      "stato": "active"
     }
@@ -344,9 +355,9 @@
      "stato": "active"
     },
     {
-     "ticker": "KXBESTLLM-29DEC31-MOON",
-     "esito": "Moonshot",
-     "etichetta": "Moonshot",
+     "ticker": "KXBESTLLM-29DEC31-ZAI",
+     "esito": "Z AI",
+     "etichetta": "Z AI",
      "prob": 4.5,
      "acquisto": 0,
      "vendita": 9.0,
